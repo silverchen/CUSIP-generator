@@ -1,0 +1,33 @@
+.container {
+    flex-direction: column;
+}
+
+.container > * {
+    margin-bottom: 50px;
+}
+
+.subContainer {
+    align-items: left;
+    flex-direction: column;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.subContainer > * {
+    margin: 5px;
+}
+
+.inputContainer {
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.inputContainer > * {
+    margin: 3px;
+}
+
+.singleResult {
+    display: 'none';
+}

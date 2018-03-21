@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CUSIP Generator</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="single" class="subContainer">
+                <div class="inputContainer">
+                    Bloomberg Ticket:
+                    <input id="field1" type="text" name="ticket">
+                </div>
+                <div id="singleResult" class="singleResult"></div>
+                <input type="button" value="Submit" onclick="submitSingle()">
+            </div>
+
+            <div id="multi" class="subContainer">
+                <div id="field2" class="inputContainer" style="flex-direction: column;">
+                    Multiple Bloomberg Tickets:
+                    <input type="text" name="ticket" class="ticket">
+                    <input type="text" name="ticket" class="ticket">
+                </div>
+                <input type="button" value="Add more fields" onclick="addFields(field2)">
+                <div id="field2Result"></div>
+
+                <input type="button" value="Submit" onclick="submitMulti()">
+            </div>
+
+            <div id="file" class="subContainer">
+                <div class="inputContainer">
+                    Upload File:
+                    <input id="field3" type="file" size="50">
+                </div>
+                <div id="field3Result"></div>
+
+                <input type="button" value="Submit" onclick="submitFile()">
+            </div>
+        </div>
+
+        <script src="./mock-backend.js"></script>
+        <script language="javascript">
+            function submitSingle() {
+                var div = document.getElementById("singleResult");
+                try {
+                    div.innerText = generateCUSIP(field1.value);
+                    div.style.display = 'block';
+                } catch (e) {
+                    div.innerText = e;
+                    console.error(e);
+                }
+            }
+
+            function submitMulti() {
+                var div = document.getElementById("field2");
+                var divResult = document.getElementById("field2Result");
+                var fields = div.getElementsByClassName("ticket");
+
+                while(divResult.firstChild) {
+                    divResult.removeChild(divResult.firstChild);
+                }
+
+                for (var i = 0; i < fields.length; i++) {
+                    var result = document.createElement("div");
+                    try {
+                        result.innerText = generateCUSIP(fields[i].value);
+                    } catch (e) {
+                        result.innerText = e;
+                        console.error(e);
+                    } finally {
+                        divResult.appendChild(result);
+                    }
+                }
+            }
+
+            function submitFile() {
+                var fileInput = document.getElementById("field3");
+                var divResult = document.getElementById("field3Result");
+                var err;
+
+                while(divResult.firstChild) {
+                    divResult.removeChild(divResult.firstChild);
+                }
+
+                if ('files' in fileInput) {
+                    if (fileInput.files.length == 0) {
+                        err = 'No file selected';
+                    } else {
+                        var file = fileInput.files[0];
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.readAsText(file, 'UTF-8');
+                            reader.onload = (event) => {
+                                var tickets = event.target.result.split(/\r?\n/);
+
+                                for (var i = 0; i < tickets.length; i++) {
+                                    var result = document.createElement("div");
+                                    try {
+                                        result.innerText = generateCUSIP(tickets[i]);
+                                    } catch (e) {
+                                        result.innerText = e;
+                                        console.error(e);
+                                    } finally {
+                                        divResult.appendChild(result);
+                                    }
+                                }
+                            }
+                            reader.onerror = (event) => {
+                                err = 'Error reading file';
+                            }
+                        }
+                    }
+                } else {
+                    err = 'No file selected';
+                }
+
+                if (!err) {
+                    console.error(err);
+                }
+            }
+
+            function addFields(parent) {
+                if (parent == null || parent == undefined) return;
+
+                var txt = document.createElement("input");
+                txt.type = "text";
+                txt.name = "ticket";
+                txt.className = "ticket";
+
+                parent.appendChild(txt);
+            }
+        </script>
+    </body>
+</html>
