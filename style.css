@@ -31,3 +31,12 @@
 .singleResult {
     display: 'none';
 }
+
+.thead {
+    font-weight: bold;
+}
+
+.disabled {
+    background-color: #ececec;
+    text-align: left;
+}

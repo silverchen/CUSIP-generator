@@ -49,36 +49,6 @@ function generateCUSIP(bloombergTicket) {
     return result;
 }
 
-function generateCheckDigit2(s) {
-    var sum = 0, v = 0;
-
-    for (var i = 0; i < s.length; i++) {
-        if (!isNaN(s[i])) {
-            v = s[i];
-        } else {
-            var p = getIndexInAlphabet(s[i]);
-
-            if (p > -1) {
-                v = p + 9;
-            } else if (s[i] == '*') {
-                v = 36;
-            } else if (s[i] == '@') {
-                v = 37;
-            } else if (s[i] == '#') {
-                v = 38;
-            }
-        }
-
-        if (v % 2 == 0) {
-            v = v * 2;
-        }
-
-        sum = sum + parseInt(v / 10) + v % 10;
-    }
-
-    return (10 - (sum % 10)) % 10;
-}
-
 function getIndexInAlphabet (char) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'
   
@@ -108,7 +78,12 @@ function generateCheckDigit(s) {
 
     var total = -1;
     for(var i = 0; i < s.length; i++) {
-        total += parseInt(CHECK_DIGITS[s.charAt(i)][i%2]);
+        if (CHECK_DIGITS[s.charAt(i)]) {
+            total += parseInt(CHECK_DIGITS[s.charAt(i)][i%2]);
+        } else {
+            throw "Invalid bloomberg ticket"
+            break;
+        }
     }
 
     total += 1;
